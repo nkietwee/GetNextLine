@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nkietwee <nkietwee@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nkietwee <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/10/20 02:22:23 by nkietwee          #+#    #+#             */
-/*   Updated: 2022/11/23 02:21:09 by nkietwee         ###   ########.fr       */
+/*   Created: 2022/11/22 22:47:46 by nkietwee          #+#    #+#             */
+/*   Updated: 2022/11/23 02:21:36 by nkietwee         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 int	ft_strlen(char *str, int mode)
 {
@@ -108,43 +108,21 @@ char	*ft_readbufjoin(char *tmp, int fd, int readbuf)
 
 char	*get_next_line(int fd)
 {
-	static char	*tmp;
+	static char	*tmp[OPEN_MAX];
 	char		*text;
 
 	if (fd < 0 || BUFFER_SIZE <= 0
 		|| read(fd, NULL, 0) == -1)
 		return (NULL);
-	if (!tmp)
+	if (!tmp[fd])
 	{
-		tmp = (char *)malloc(sizeof(char));
-		if (!tmp)
+		tmp[fd] = (char *)malloc(sizeof(char));
+		if (!tmp[fd])
 			return (NULL);
-		tmp[0] = 0;
+		tmp[fd][0] = 0;
 	}
-	tmp = ft_readbufjoin(tmp, fd, 1);
-	text = ft_keeptext(tmp);
-	tmp = ft_keeptmp(tmp);
+	tmp[fd] = ft_readbufjoin(tmp[fd], fd, 1);
+	text = ft_keeptext(tmp[fd]);
+	tmp[fd] = ft_keeptmp(tmp[fd]);
 	return (text);
 }
-
-/*int	main(void)
-{
-	char	*str;
-	int	i;
-
-	i = 0;
-	int fd = open("foo.txt", O_RDWR);
-	while (i < 5)
-	{
-		str = get_next_line(fd);
-		printf("%d : |%s|\n", i+1, str);
-		printf("-----------------------------------------------------------\n");
-		free (str);
-		i++;
-	}
-		close(fd);
-		str = get_next_line(fd);
-		printf("%d : |%s|\n", i+1, str);
-		printf("----------------------------------------------------------\n");
-		free (str);
-}*/
